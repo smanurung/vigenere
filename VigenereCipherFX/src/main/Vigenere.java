@@ -10,12 +10,13 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -40,6 +41,8 @@ public class Vigenere extends Application {
         HBox hbox = addHBox();
         border.setTop(hbox);
         border.setLeft(addVBox());
+        border.setRight(addFlowPane());
+        border.setCenter(addCenterPane());
         
         Scene scene = new Scene(border);
         stage.setScene(scene);
@@ -53,7 +56,7 @@ public class Vigenere extends Application {
         hbox.setSpacing(10);
         
         TextField inputTxt = new TextField();
-        inputTxt.setPrefColumnCount(20);
+        inputTxt.setPrefColumnCount(40);
         Button browseBtn = new Button("browse");
         hbox.getChildren().addAll(inputTxt,browseBtn);
         return hbox;
@@ -92,6 +95,35 @@ public class Vigenere extends Application {
             vbox.getChildren().add(optionBox[i]);
         }
         
+        return vbox;
+    }
+
+    private FlowPane addFlowPane() {
+        FlowPane flow = new FlowPane();
+        flow.setPadding(new Insets(5, 5, 5, 5));
+        flow.setVgap(5);
+        flow.setHgap(15);
+        flow.setPrefWidth(100);
+        flow.setStyle("-fx-background-color: F5F6CE;");
+        
+        Button enBtn = new Button("Enkripsi");
+        Button decBtn = new Button("Dekripsi");
+        Button saveBtn = new Button("Save");
+        
+        flow.getChildren().addAll(enBtn,decBtn,saveBtn);
+        
+        return flow;
+    }
+
+    private VBox addCenterPane() {
+        VBox vbox = new VBox();
+        TextField key = new TextField();
+        key.setPrefColumnCount(30);
+        TextArea result = new TextArea("hehe");
+        result.setPrefColumnCount(30);
+        result.setPrefRowCount(20);
+        
+        vbox.getChildren().addAll(key,result);
         return vbox;
     }
 }
