@@ -1,4 +1,4 @@
 VigenereCipher
 ==============
 
-Cryptography Assignment on Vigenere Cipher
+Cryptography Assignment on Vigenere Cipher using JavaFX
