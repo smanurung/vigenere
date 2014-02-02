@@ -6,9 +6,12 @@
 
 package main;
 
+import java.io.File;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -22,6 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
@@ -35,10 +39,10 @@ public class Vigenere extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(final Stage stage) throws Exception {
         BorderPane border = new BorderPane();
         
-        HBox hbox = addHBox();
+        HBox hbox = addHBox(stage);
         border.setTop(hbox);
         border.setLeft(addVBox());
         border.setRight(addFlowPane());
@@ -50,14 +54,39 @@ public class Vigenere extends Application {
         stage.show();
     }
 
-    private HBox addHBox() {
+    private HBox addHBox(final Stage stage) {
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(15, 12, 15, 12));
         hbox.setSpacing(10);
         
+        final FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Input File");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Input File", "*.in"),
+                new FileChooser.ExtensionFilter("Text", "*.txt")
+        );
+        
         TextField inputTxt = new TextField();
         inputTxt.setPrefColumnCount(40);
+        inputTxt.setPromptText("plaintext here ... ");
         Button browseBtn = new Button("browse");
+        browseBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                File file = fileChooser.showOpenDialog(stage);
+                if (file != null)
+                {
+                    System.out.println("file ada");
+                }
+                else
+                {
+                    System.out.println("file null");
+                }
+            }
+        });
+        
         hbox.getChildren().addAll(inputTxt,browseBtn);
         return hbox;
     }
@@ -104,7 +133,7 @@ public class Vigenere extends Application {
         flow.setVgap(5);
         flow.setHgap(15);
         flow.setPrefWidth(100);
-        flow.setStyle("-fx-background-color: F5F6CE;");
+//        flow.setStyle("-fx-background-color: F5F6CE;");
         
         Button enBtn = new Button("Enkripsi");
         Button decBtn = new Button("Dekripsi");
@@ -118,8 +147,9 @@ public class Vigenere extends Application {
     private VBox addCenterPane() {
         VBox vbox = new VBox();
         TextField key = new TextField();
+        key.setPromptText("key here ... ");
         key.setPrefColumnCount(30);
-        TextArea result = new TextArea("hehe");
+        TextArea result = new TextArea();
         result.setPrefColumnCount(30);
         result.setPrefRowCount(20);
         
