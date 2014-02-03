@@ -330,22 +330,24 @@ public class Vigenere extends Application {
                 {
                     StringBuilder sb = new StringBuilder();
                     
-                    for(int i=0; i<plain.length(); i++)
+                    for(int i=0; i<cipher.length(); i++)
                     {
-                        if(plain.charAt(i) == ' ')
+                        if(cipher.charAt(i) == ' ')
                         {
                             sb.append(' ');
                         }
                         else
                         {
-                            int resInt = ((int)plain.charAt(i) + (int)kunci.charAt(i % kunci.length())) % ASCII_TOTAL;
-//                            System.out.println("temp "+temp+" resInt "+resInt);
-
+                            int resInt = ((int)cipher.charAt(i) - (int)kunci.charAt(i % kunci.length())) % ASCII_TOTAL;
+                            if (resInt<0)
+                            {
+                                resInt += ASCII_TOTAL;
+                            }
                             char res = (char)resInt;
                             sb.append(res);
                         }
                     }
-                    cipher = sb.toString();
+                    plain = sb.toString();
                 }
                 result.setText(plain);
             }
