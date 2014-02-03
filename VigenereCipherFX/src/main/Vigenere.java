@@ -6,7 +6,13 @@
 
 package main;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,6 +39,17 @@ import javafx.stage.Stage;
  * @author FUJITSU
  */
 public class Vigenere extends Application {
+    
+    private final int ASCII_A = 97;
+    
+    private TextField inputTxt;
+    private File inputFile;
+    private TextField key;
+    
+    private ComboBox modeBox;
+    private ComboBox inputBox;
+    private ComboBox resModeBox;
+    
     public static void main(String[] args)
     {
         launch(Vigenere.class, args);
@@ -40,6 +57,7 @@ public class Vigenere extends Application {
 
     @Override
     public void start(final Stage stage) throws Exception {
+        
         BorderPane border = new BorderPane();
         
         HBox hbox = addHBox(stage);
@@ -67,7 +85,7 @@ public class Vigenere extends Application {
                 new FileChooser.ExtensionFilter("Text", "*.txt")
         );
         
-        TextField inputTxt = new TextField();
+        inputTxt = new TextField();
         inputTxt.setPrefColumnCount(40);
         inputTxt.setPromptText("plaintext here ... ");
         Button browseBtn = new Button("browse");
@@ -75,8 +93,8 @@ public class Vigenere extends Application {
 
             @Override
             public void handle(ActionEvent t) {
-                File file = fileChooser.showOpenDialog(stage);
-                if (file != null)
+                inputFile = fileChooser.showOpenDialog(stage);
+                if (inputFile != null)
                 {
                     System.out.println("file ada");
                 }
@@ -104,13 +122,13 @@ public class Vigenere extends Application {
         ObservableList<String> inputList = FXCollections.observableArrayList("File","Text");
         ObservableList<String> resModeList = FXCollections.observableArrayList("Normal","No Space","Group-5");
         
-        ComboBox modeBox = new ComboBox(modeList);
+        modeBox = new ComboBox(modeList);
         modeBox.setValue("Standard");
 //        creation using built-in method
-        ComboBox inputBox = new ComboBox();
+        inputBox = new ComboBox();
         inputBox.setItems(inputList);
         inputBox.setValue("Text");
-        ComboBox resModeBox = new ComboBox(resModeList);
+        resModeBox = new ComboBox(resModeList);
         resModeBox.setValue("Normal");
         
         ComboBox optionBox[] = new ComboBox[]
@@ -136,6 +154,64 @@ public class Vigenere extends Application {
 //        flow.setStyle("-fx-background-color: F5F6CE;");
         
         Button enBtn = new Button("Enkripsi");
+        enBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+            private String plain;
+            private String kunci;
+            private String cipher;
+            
+            @Override
+            public void handle(ActionEvent t) {
+                kunci = key.getText();
+                if(kunci.equals(""))
+                {
+                    kunci = "hello";
+                }
+                if(inputBox.getValue().equals("Text"))
+                {
+                    plain = inputTxt.getText();
+                }
+                else if(inputBox.getValue().equals("File"))
+                {
+                    if(inputFile!=null)
+                    {
+                        try {
+                            BufferedReader br = new BufferedReader(new FileReader(inputFile));
+                            plain = br.readLine();
+                        } catch (FileNotFoundException ex) {
+                            Logger.getLogger(Vigenere.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (IOException e){}
+                    }
+                    else
+                    {
+                        System.out.println("ERROR. File kosong!");
+                    }
+                }
+                if (modeBox.getValue().equals("Standard"))
+                {
+                    System.out.println("plainteks: "+plain);
+                    System.out.println("kunci: "+kunci);
+                    
+                    StringBuilder sb = new StringBuilder();
+                    
+                    for (int i=0; i<plain.length(); i++)
+                    {
+                        int temp = (int)plain.charAt(i) - ASCII_A + (int)kunci.charAt(i % kunci.length()) - ASCII_A;
+                        int resInt = temp + ASCII_A;
+                        
+                        char res = (char)resInt;
+                        sb.append(res);
+                    }
+                    cipher = sb.toString();
+                    System.out.println("hasil enkripsi: "+sb.toString());
+                }
+                else if (modeBox.getValue().equals("Extended"))
+                {
+                    
+                }
+            }
+        });
+        
         Button decBtn = new Button("Dekripsi");
         Button saveBtn = new Button("Save");
         
@@ -146,7 +222,7 @@ public class Vigenere extends Application {
 
     private VBox addCenterPane() {
         VBox vbox = new VBox();
-        TextField key = new TextField();
+        key = new TextField();
         key.setPromptText("key here ... ");
         key.setPrefColumnCount(30);
         TextArea result = new TextArea();
