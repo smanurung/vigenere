@@ -42,6 +42,7 @@ public class Vigenere extends Application {
     
     private final int ASCII_A = 97;
     private final int ALPHABET = 26;
+    private final int ASCII_TOTAL = 256;
     
     private TextField inputTxt;
     private File inputFile;
@@ -191,8 +192,8 @@ public class Vigenere extends Application {
                 }
                 if (modeBox.getValue().equals("Standard"))
                 {
-                    System.out.println("plainteks: "+plain);
-                    System.out.println("kunci: "+kunci);
+//                    System.out.println("plainteks: "+plain);
+//                    System.out.println("kunci: "+kunci);
                     
                     StringBuilder sb = new StringBuilder();
                     
@@ -204,21 +205,38 @@ public class Vigenere extends Application {
                         }
                         else
                         {
-                            int temp = ((int)plain.charAt(i) - ASCII_A + (int)kunci.charAt(i % kunci.length()) - ASCII_A) % 26;
+                            int temp = ((int)plain.charAt(i) - ASCII_A + (int)kunci.charAt(i % kunci.length()) - ASCII_A) % ALPHABET;
                             int resInt = temp + ASCII_A;
-                            System.out.println("temp "+temp+" resInt "+resInt);
+//                            System.out.println("temp "+temp+" resInt "+resInt);
 
                             char res = (char)resInt;
                             sb.append(res);
                         }
                     }
                     cipher = sb.toString();
-                    System.out.println("hasil enkripsi: "+sb.toString());
                 }
                 else if (modeBox.getValue().equals("Extended"))
                 {
+                    StringBuilder sb = new StringBuilder();
                     
+                    for(int i=0; i<plain.length(); i++)
+                    {
+                        if(plain.charAt(i) == ' ')
+                        {
+                            sb.append(' ');
+                        }
+                        else
+                        {
+                            int resInt = ((int)plain.charAt(i) + (int)kunci.charAt(i % kunci.length())) % ASCII_TOTAL;
+//                            System.out.println("temp "+temp+" resInt "+resInt);
+
+                            char res = (char)resInt;
+                            sb.append(res);
+                        }
+                    }
+                    cipher = sb.toString();
                 }
+                System.out.println("hasil enkripsi: "+cipher);
             }
         });
         
