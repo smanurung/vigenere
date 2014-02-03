@@ -41,6 +41,7 @@ import javafx.stage.Stage;
 public class Vigenere extends Application {
     
     private final int ASCII_A = 97;
+    private final int ALPHABET = 26;
     
     private TextField inputTxt;
     private File inputFile;
@@ -169,7 +170,8 @@ public class Vigenere extends Application {
                 }
                 if(inputBox.getValue().equals("Text"))
                 {
-                    plain = inputTxt.getText();
+//                    pemrosesan dilakukan dengan huruf kecil
+                    plain = inputTxt.getText().toLowerCase();
                 }
                 else if(inputBox.getValue().equals("File"))
                 {
@@ -196,11 +198,19 @@ public class Vigenere extends Application {
                     
                     for (int i=0; i<plain.length(); i++)
                     {
-                        int temp = (int)plain.charAt(i) - ASCII_A + (int)kunci.charAt(i % kunci.length()) - ASCII_A;
-                        int resInt = temp + ASCII_A;
-                        
-                        char res = (char)resInt;
-                        sb.append(res);
+                        if(plain.charAt(i) == ' ')
+                        {
+                            sb.append(' ');
+                        }
+                        else
+                        {
+                            int temp = ((int)plain.charAt(i) - ASCII_A + (int)kunci.charAt(i % kunci.length()) - ASCII_A) % 26;
+                            int resInt = temp + ASCII_A;
+                            System.out.println("temp "+temp+" resInt "+resInt);
+
+                            char res = (char)resInt;
+                            sb.append(res);
+                        }
                     }
                     cipher = sb.toString();
                     System.out.println("hasil enkripsi: "+sb.toString());
