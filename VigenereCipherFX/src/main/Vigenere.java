@@ -171,7 +171,7 @@ public class Vigenere extends Application {
                 kunci = kunci.replaceAll("\\s+", "");
                 if(kunci.equals(""))
                 {
-                    kunci = "hello";
+                    kunci = "a";
                 }
                 if(inputBox.getValue().equals("Text"))
                 {
@@ -259,7 +259,7 @@ public class Vigenere extends Application {
                     }
                     cipher = sbsb.toString();
                 }
-                System.out.println("hasil enkripsi: "+cipher);
+//                System.out.println("hasil enkripsi: "+cipher);
                 result.setText(cipher);
             }
         });
@@ -267,9 +267,87 @@ public class Vigenere extends Application {
         Button decBtn = new Button("Dekripsi");
         decBtn.setOnAction(new EventHandler<ActionEvent>() {
 
+            private String plain;
+            private String kunci;
+            private String cipher;
+            
             @Override
             public void handle(ActionEvent t) {
-                
+                kunci = key.getText();
+//                menghilangkan spasi yang ada pada kunci
+                kunci = kunci.replaceAll("\\s+", "");
+                if(kunci.equals(""))
+                {
+                    kunci = "a";
+                }
+                if(inputBox.getValue().equals("Text"))
+                {
+//                    pemrosesan dilakukan dengan huruf kecil
+                    cipher = inputTxt.getText();
+                }
+                else if(inputBox.getValue().equals("File"))
+                {
+                    if(inputFile!=null)
+                    {
+                        try {
+                            BufferedReader br = new BufferedReader(new FileReader(inputFile));
+                            cipher = br.readLine();
+                        } catch (FileNotFoundException ex) {
+                            Logger.getLogger(Vigenere.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (IOException e){}
+                    }
+                    else
+                    {
+                        System.out.println("ERROR. File kosong!");
+                    }
+                }
+                if (modeBox.getValue().equals("Standard"))
+                {
+                    cipher = cipher.toLowerCase();
+                    StringBuilder sb = new StringBuilder();
+                    
+                    for (int i=0; i<cipher.length(); i++)
+                    {
+                        if(cipher.charAt(i) == ' ')
+                        {
+                            sb.append(' ');
+                        }
+                        else
+                        {
+                            int temp = (((int)cipher.charAt(i) - ASCII_A) - ((int)kunci.charAt(i % kunci.length()) - ASCII_A)) % ALPHABET;
+                            if(temp < 0)
+                            {
+                                temp += ALPHABET;
+                            }
+                            int resInt = temp + ASCII_A;
+                            char res = (char)resInt;
+                            sb.append(res);
+                        }
+                    }
+                    plain = sb.toString();
+                }
+                else if (modeBox.getValue().equals("Extended"))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    
+                    for(int i=0; i<plain.length(); i++)
+                    {
+                        if(plain.charAt(i) == ' ')
+                        {
+                            sb.append(' ');
+                        }
+                        else
+                        {
+                            int resInt = ((int)plain.charAt(i) + (int)kunci.charAt(i % kunci.length())) % ASCII_TOTAL;
+//                            System.out.println("temp "+temp+" resInt "+resInt);
+
+                            char res = (char)resInt;
+                            sb.append(res);
+                        }
+                    }
+                    cipher = sb.toString();
+                }
+                result.setText(plain);
             }
         });
         Button saveBtn = new Button("Save");
