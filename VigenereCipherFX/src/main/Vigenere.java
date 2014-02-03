@@ -35,6 +35,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -169,99 +170,105 @@ public class Vigenere extends Application {
             @Override
             public void handle(ActionEvent t) {
                 kunci = key.getText();
-//                menghilangkan spasi yang ada pada kunci
-                kunci = kunci.replaceAll("\\s+", "");
-                if(kunci.equals(""))
+                
+                if(kunci.length() > 25)
                 {
-                    kunci = "a";
+                    System.out.println("ERROR. Kunci terlalu panjang!");
                 }
-                if(inputBox.getValue().equals("Text"))
+                else
                 {
-//                    pemrosesan dilakukan dengan huruf kecil
-                    plain = inputTxt.getText();
-                }
-                else if(inputBox.getValue().equals("File"))
-                {
-                    if(inputFile!=null)
+//                    menghilangkan spasi yang ada pada kunci
+                    kunci = kunci.replaceAll("\\s+", "");
+                    if(kunci.equals(""))
                     {
-                        try {
-                            BufferedReader br = new BufferedReader(new FileReader(inputFile));
-                            plain = br.readLine();
-                        } catch (FileNotFoundException ex) {
-                            Logger.getLogger(Vigenere.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException e){}
+                        kunci = "a";
                     }
-                    else
+                    if(inputBox.getValue().equals("Text"))
                     {
-                        System.out.println("ERROR. File kosong!");
+//                        pemrosesan dilakukan dengan huruf kecil
+                        plain = inputTxt.getText();
                     }
-                }
-                if (modeBox.getValue().equals("Standard"))
-                {
-                    plain = plain.toLowerCase();
-                    StringBuilder sb = new StringBuilder();
-                    
-                    for (int i=0; i<plain.length(); i++)
+                    else if(inputBox.getValue().equals("File"))
                     {
-                        if(plain.charAt(i) == ' ')
+                        if(inputFile!=null)
                         {
-                            sb.append(' ');
+                            try {
+                                BufferedReader br = new BufferedReader(new FileReader(inputFile));
+                                plain = br.readLine();
+                            } catch (FileNotFoundException ex) {
+                                Logger.getLogger(Vigenere.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (IOException e){}
                         }
                         else
                         {
-                            int temp = ((int)plain.charAt(i) - ASCII_A + (int)kunci.charAt(i % kunci.length()) - ASCII_A) % ALPHABET;
-                            int resInt = temp + ASCII_A;
-//                            System.out.println("temp "+temp+" resInt "+resInt);
-
-                            char res = (char)resInt;
-                            sb.append(res);
+                            System.out.println("ERROR. File kosong!");
                         }
                     }
-                    cipher = sb.toString();
-                }
-                else if (modeBox.getValue().equals("Extended"))
-                {
-                    StringBuilder sb = new StringBuilder();
-                    
-                    for(int i=0; i<plain.length(); i++)
+                    if (modeBox.getValue().equals("Standard"))
                     {
-                        if(plain.charAt(i) == ' ')
-                        {
-                            sb.append(' ');
-                        }
-                        else
-                        {
-                            int resInt = ((int)plain.charAt(i) + (int)kunci.charAt(i % kunci.length())) % ASCII_TOTAL;
-//                            System.out.println("temp "+temp+" resInt "+resInt);
+                        plain = plain.toLowerCase();
+                        StringBuilder sb = new StringBuilder();
 
-                            char res = (char)resInt;
-                            sb.append(res);
+                        for (int i=0; i<plain.length(); i++)
+                        {
+                            if(plain.charAt(i) == ' ')
+                            {
+                                sb.append(' ');
+                            }
+                            else
+                            {
+                                int temp = ((int)plain.charAt(i) - ASCII_A + (int)kunci.charAt(i % kunci.length()) - ASCII_A) % ALPHABET;
+                                int resInt = temp + ASCII_A;
+
+                                char res = (char)resInt;
+                                sb.append(res);
+                            }
                         }
+                        cipher = sb.toString();
                     }
-                    cipher = sb.toString();
-                }
-                if(resModeBox.getValue().equals("Normal"))
-                {
-//                    do nothing
-                }
-                else if(resModeBox.getValue().equals("No Space"))
-                {
-//                    remove space
-                    cipher = cipher.replaceAll("\\s+", "");
-                }
-                else if(resModeBox.getValue().equals("Group-5"))
-                {
-                    StringBuilder sbsb = new StringBuilder();
-                    cipher = cipher.replaceAll("\\s+", "");
-                    while (cipher.length() > 5)
+                    else if (modeBox.getValue().equals("Extended"))
                     {
-                        sbsb.append(cipher.substring(0, 5));
-                        cipher = cipher.substring(5);
-                        sbsb.append(" ");
+                        StringBuilder sb = new StringBuilder();
+
+                        for(int i=0; i<plain.length(); i++)
+                        {
+                            if(plain.charAt(i) == ' ')
+                            {
+                                sb.append(' ');
+                            }
+                            else
+                            {
+                                int resInt = ((int)plain.charAt(i) + (int)kunci.charAt(i % kunci.length())) % ASCII_TOTAL;
+
+                                char res = (char)resInt;
+                                sb.append(res);
+                            }
+                        }
+                        cipher = sb.toString();
                     }
-                    cipher = sbsb.append(cipher.substring(0)).toString();
+                    if(resModeBox.getValue().equals("Normal"))
+                    {
+//                        do nothing
+                    }
+                    else if(resModeBox.getValue().equals("No Space"))
+                    {
+//                        remove space
+                        cipher = cipher.replaceAll("\\s+", "");
+                    }
+                    else if(resModeBox.getValue().equals("Group-5"))
+                    {
+                        StringBuilder sbsb = new StringBuilder();
+                        cipher = cipher.replaceAll("\\s+", "");
+                        while (cipher.length() > 5)
+                        {
+                            sbsb.append(cipher.substring(0, 5));
+                            cipher = cipher.substring(5);
+                            sbsb.append(" ");
+                        }
+                        cipher = sbsb.append(cipher.substring(0)).toString();
+                    }
+                    result.setText(cipher);
                 }
-                result.setText(cipher);
             }
         });
         
@@ -275,103 +282,110 @@ public class Vigenere extends Application {
             @Override
             public void handle(ActionEvent t) {
                 kunci = key.getText();
-//                menghilangkan spasi yang ada pada kunci
-                kunci = kunci.replaceAll("\\s+", "");
-                if(kunci.equals(""))
+                if(kunci.length() > 25)
                 {
-                    kunci = "a";
+                    System.out.println("ERROR. Kunci terlalu panjang!");
                 }
-                if(inputBox.getValue().equals("Text"))
+                else
                 {
-//                    pemrosesan dilakukan dengan huruf kecil
-                    cipher = inputTxt.getText();
-                }
-                else if(inputBox.getValue().equals("File"))
-                {
-                    if(inputFile!=null)
+//                      menghilangkan spasi yang ada pada kunci
+                    kunci = kunci.replaceAll("\\s+", "");
+                    if(kunci.equals(""))
                     {
-                        try {
-                            BufferedReader br = new BufferedReader(new FileReader(inputFile));
-                            cipher = br.readLine();
-                        } catch (FileNotFoundException ex) {
-                            Logger.getLogger(Vigenere.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException e){}
+                        kunci = "a";
                     }
-                    else
+                    if(inputBox.getValue().equals("Text"))
                     {
-                        System.out.println("ERROR. File kosong!");
+//                        pemrosesan dilakukan dengan huruf kecil
+                        cipher = inputTxt.getText();
                     }
-                }
-                if (modeBox.getValue().equals("Standard"))
-                {
-                    cipher = cipher.toLowerCase();
-                    StringBuilder sb = new StringBuilder();
-                    
-                    for (int i=0; i<cipher.length(); i++)
+                    else if(inputBox.getValue().equals("File"))
                     {
-                        if(cipher.charAt(i) == ' ')
+                        if(inputFile!=null)
                         {
-                            sb.append(' ');
+                            try {
+                                BufferedReader br = new BufferedReader(new FileReader(inputFile));
+                                cipher = br.readLine();
+                            } catch (FileNotFoundException ex) {
+                                Logger.getLogger(Vigenere.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (IOException e){}
                         }
                         else
                         {
-                            int temp = (((int)cipher.charAt(i) - ASCII_A) - ((int)kunci.charAt(i % kunci.length()) - ASCII_A)) % ALPHABET;
-                            if(temp < 0)
-                            {
-                                temp += ALPHABET;
-                            }
-                            int resInt = temp + ASCII_A;
-                            char res = (char)resInt;
-                            sb.append(res);
+                            System.out.println("ERROR. File kosong!");
                         }
                     }
-                    plain = sb.toString();
-                }
-                else if (modeBox.getValue().equals("Extended"))
-                {
-                    StringBuilder sb = new StringBuilder();
-                    
-                    for(int i=0; i<cipher.length(); i++)
+                    if (modeBox.getValue().equals("Standard"))
                     {
-                        if(cipher.charAt(i) == ' ')
+                        cipher = cipher.toLowerCase();
+                        StringBuilder sb = new StringBuilder();
+
+                        for (int i=0; i<cipher.length(); i++)
                         {
-                            sb.append(' ');
-                        }
-                        else
-                        {
-                            int resInt = ((int)cipher.charAt(i) - (int)kunci.charAt(i % kunci.length())) % ASCII_TOTAL;
-                            if (resInt<0)
+                            if(cipher.charAt(i) == ' ')
                             {
-                                resInt += ASCII_TOTAL;
+                                sb.append(' ');
                             }
-                            char res = (char)resInt;
-                            sb.append(res);
+                            else
+                            {
+                                int temp = (((int)cipher.charAt(i) - ASCII_A) - ((int)kunci.charAt(i % kunci.length()) - ASCII_A)) % ALPHABET;
+                                if(temp < 0)
+                                {
+                                    temp += ALPHABET;
+                                }
+                                int resInt = temp + ASCII_A;
+                                char res = (char)resInt;
+                                sb.append(res);
+                            }
                         }
+                        plain = sb.toString();
                     }
-                    plain = sb.toString();
-                }
-                if(resModeBox.getValue().equals("Normal"))
-                {
-//                    do nothing
-                }
-                else if(resModeBox.getValue().equals("No Space"))
-                {
-//                    remove space
-                    plain = plain.replaceAll("\\s+", "");
-                }
-                else if(resModeBox.getValue().equals("Group-5"))
-                {
-                    StringBuilder sbsb = new StringBuilder();
-                    plain = plain.replaceAll("\\s+", "");
-                    while (plain.length() > 5)
+                    else if (modeBox.getValue().equals("Extended"))
                     {
-                        sbsb.append(plain.substring(0, 5));
-                        plain = plain.substring(5);
-                        sbsb.append(" ");
+                        StringBuilder sb = new StringBuilder();
+
+                        for(int i=0; i<cipher.length(); i++)
+                        {
+                            if(cipher.charAt(i) == ' ')
+                            {
+                                sb.append(' ');
+                            }
+                            else
+                            {
+                                int resInt = ((int)cipher.charAt(i) - (int)kunci.charAt(i % kunci.length())) % ASCII_TOTAL;
+                                if (resInt<0)
+                                {
+                                    resInt += ASCII_TOTAL;
+                                }
+                                char res = (char)resInt;
+                                sb.append(res);
+                            }
+                        }
+                        plain = sb.toString();
                     }
-                    plain = sbsb.append(plain.substring(0)).toString();
+                    if(resModeBox.getValue().equals("Normal"))
+                    {
+//                        do nothing
+                    }
+                    else if(resModeBox.getValue().equals("No Space"))
+                    {
+//                        remove space
+                        plain = plain.replaceAll("\\s+", "");
+                    }
+                    else if(resModeBox.getValue().equals("Group-5"))
+                    {
+                        StringBuilder sbsb = new StringBuilder();
+                        plain = plain.replaceAll("\\s+", "");
+                        while (plain.length() > 5)
+                        {
+                            sbsb.append(plain.substring(0, 5));
+                            plain = plain.substring(5);
+                            sbsb.append(" ");
+                        }
+                        plain = sbsb.append(plain.substring(0)).toString();
+                    }
+                    result.setText(plain);
                 }
-                result.setText(plain);
             }
         });
         Button saveBtn = new Button("Save");
