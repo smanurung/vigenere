@@ -236,6 +236,19 @@ public class Vigenere extends Application {
                     }
                     cipher = sb.toString();
                 }
+                if(resModeBox.getValue().equals("Normal"))
+                {
+//                    do nothing
+                }
+                else if(resModeBox.getValue().equals("No Space"))
+                {
+//                    remove space
+                    cipher = cipher.replaceAll("\\s+", "");
+                }
+                else if(resModeBox.getValue().equals("Group-5"))
+                {
+                    
+                }
                 System.out.println("hasil enkripsi: "+cipher);
             }
         });
