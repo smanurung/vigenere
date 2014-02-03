@@ -257,9 +257,8 @@ public class Vigenere extends Application {
                         cipher = cipher.substring(5);
                         sbsb.append(" ");
                     }
-                    cipher = sbsb.toString();
+                    cipher = sbsb.append(cipher.substring(0)).toString();
                 }
-//                System.out.println("hasil enkripsi: "+cipher);
                 result.setText(cipher);
             }
         });
@@ -348,6 +347,27 @@ public class Vigenere extends Application {
                         }
                     }
                     plain = sb.toString();
+                }
+                if(resModeBox.getValue().equals("Normal"))
+                {
+//                    do nothing
+                }
+                else if(resModeBox.getValue().equals("No Space"))
+                {
+//                    remove space
+                    plain = plain.replaceAll("\\s+", "");
+                }
+                else if(resModeBox.getValue().equals("Group-5"))
+                {
+                    StringBuilder sbsb = new StringBuilder();
+                    plain = plain.replaceAll("\\s+", "");
+                    while (plain.length() > 5)
+                    {
+                        sbsb.append(plain.substring(0, 5));
+                        plain = plain.substring(5);
+                        sbsb.append(" ");
+                    }
+                    plain = sbsb.append(plain.substring(0)).toString();
                 }
                 result.setText(plain);
             }
