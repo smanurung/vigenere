@@ -52,6 +52,8 @@ public class Vigenere extends Application {
     private ComboBox inputBox;
     private ComboBox resModeBox;
     
+    private TextArea result;
+    
     public static void main(String[] args)
     {
         launch(Vigenere.class, args);
@@ -165,6 +167,8 @@ public class Vigenere extends Application {
             @Override
             public void handle(ActionEvent t) {
                 kunci = key.getText();
+//                menghilangkan spasi yang ada pada kunci
+                kunci = kunci.replaceAll("\\s+", "");
                 if(kunci.equals(""))
                 {
                     kunci = "hello";
@@ -172,7 +176,7 @@ public class Vigenere extends Application {
                 if(inputBox.getValue().equals("Text"))
                 {
 //                    pemrosesan dilakukan dengan huruf kecil
-                    plain = inputTxt.getText().toLowerCase();
+                    plain = inputTxt.getText();
                 }
                 else if(inputBox.getValue().equals("File"))
                 {
@@ -192,9 +196,7 @@ public class Vigenere extends Application {
                 }
                 if (modeBox.getValue().equals("Standard"))
                 {
-//                    System.out.println("plainteks: "+plain);
-//                    System.out.println("kunci: "+kunci);
-                    
+                    plain = plain.toLowerCase();
                     StringBuilder sb = new StringBuilder();
                     
                     for (int i=0; i<plain.length(); i++)
@@ -247,13 +249,29 @@ public class Vigenere extends Application {
                 }
                 else if(resModeBox.getValue().equals("Group-5"))
                 {
-                    
+                    StringBuilder sbsb = new StringBuilder();
+                    cipher = cipher.replaceAll("\\s+", "");
+                    while (cipher.length() > 5)
+                    {
+                        sbsb.append(cipher.substring(0, 5));
+                        cipher = cipher.substring(5);
+                        sbsb.append(" ");
+                    }
+                    cipher = sbsb.toString();
                 }
                 System.out.println("hasil enkripsi: "+cipher);
+                result.setText(cipher);
             }
         });
         
         Button decBtn = new Button("Dekripsi");
+        decBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                
+            }
+        });
         Button saveBtn = new Button("Save");
         
         flow.getChildren().addAll(enBtn,decBtn,saveBtn);
@@ -266,9 +284,10 @@ public class Vigenere extends Application {
         key = new TextField();
         key.setPromptText("key here ... ");
         key.setPrefColumnCount(30);
-        TextArea result = new TextArea();
+        result = new TextArea();
         result.setPrefColumnCount(30);
         result.setPrefRowCount(20);
+        result.setEditable(false);
         
         vbox.getChildren().addAll(key,result);
         return vbox;
