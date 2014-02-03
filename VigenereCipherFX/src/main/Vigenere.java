@@ -10,7 +10,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -67,7 +69,7 @@ public class Vigenere extends Application {
         HBox hbox = addHBox(stage);
         border.setTop(hbox);
         border.setLeft(addVBox());
-        border.setRight(addFlowPane());
+        border.setRight(addFlowPane(stage));
         border.setCenter(addCenterPane());
         
         Scene scene = new Scene(border);
@@ -84,10 +86,10 @@ public class Vigenere extends Application {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Input File");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Input File", "*.in"),
-                new FileChooser.ExtensionFilter("Text", "*.txt")
-        );
+//        fileChooser.getExtensionFilters().addAll(
+//                new FileChooser.ExtensionFilter("Vigenere File", "*.vig"),
+//                new FileChooser.ExtensionFilter("Text File", "*.txt")
+//        );
         
         inputTxt = new TextField();
         inputTxt.setPrefColumnCount(40);
@@ -149,7 +151,7 @@ public class Vigenere extends Application {
         return vbox;
     }
 
-    private FlowPane addFlowPane() {
+    private FlowPane addFlowPane(final Stage stage) {
         FlowPane flow = new FlowPane();
         flow.setPadding(new Insets(5, 5, 5, 5));
         flow.setVgap(5);
@@ -373,6 +375,36 @@ public class Vigenere extends Application {
             }
         });
         Button saveBtn = new Button("Save");
+        saveBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+//                fileChooser.getExtensionFilters().addAll(
+//                        new FileChooser.ExtensionFilter("Vigenere File", "*.vig"),
+//                        new FileChooser.ExtensionFilter("Text File", "*.txt")
+//                );
+                fileChooser.setTitle("Save File");
+                File file = fileChooser.showSaveDialog(stage);
+                if(file!=null)
+                {
+                    FileWriter fileWriter = null;
+                    try {
+                        fileWriter = new FileWriter(file);
+                        fileWriter.write(result.getText());
+                    } catch (IOException ex) {
+                        Logger.getLogger(Vigenere.class.getName()).log(Level.SEVERE, null, ex);
+                    } finally {
+                        try {
+                            fileWriter.close();
+                        } catch (IOException ex) {
+                            Logger.getLogger(Vigenere.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+        });
         
         flow.getChildren().addAll(enBtn,decBtn,saveBtn);
         
